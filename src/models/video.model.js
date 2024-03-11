@@ -8,7 +8,7 @@ const COLLECTION_NAME = "Videos";
 const videoSchema = new Schema(
   {
     user_id: { type: Schema.Types.ObjectId, ref: "User" },
-    content: { type: String, requireed: true },
+    content: { type: String, required: true },
     media_url: { type: String, required: true },
     like_count: { type: Number, default: 0 },
     view_count: { type: Number, default: 0 },

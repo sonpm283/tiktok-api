@@ -5,11 +5,12 @@ const JWT = require("jsonwebtoken");
 const createTokenPair = async (payload, publicKey, privateKey) => {
   try {
     // acccess token
-    // tạo access token bằng JWT.sign() với privateKey
+    // tạo access token bằng JWT.sign() với publicKey,
     const accessToken = await JWT.sign(payload, publicKey, {
       expiresIn: "2 days",
     });
 
+    // tạo refresh token bằng JWT.sign() với privateKey,
     const refreshToken = await JWT.sign(payload, privateKey, {
       expiresIn: "7 days",
     });
