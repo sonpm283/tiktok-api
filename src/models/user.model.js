@@ -24,7 +24,7 @@ const userSchema = new Schema(
     },
     avatar: { type: String, default: "" },
     bio: { type: String, default: "" },
-    tick: { type: Boolean },
+    tick: { type: Boolean, default: false },
     followers_count: { type: Number, default: 0 },
     followings_count: { type: Number, default: 0 },
     like_count: { type: Number, default: 0 },

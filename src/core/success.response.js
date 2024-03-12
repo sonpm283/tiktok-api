@@ -35,16 +35,19 @@ class OK extends SuccessResonse {
 
 class CREATED extends SuccessResonse {
   constructor({
+    options = {},
     message,
     statusCode = StatusCode.CREATED,
     reasonStatusCode = ReasonStatusCode.CREATED,
     metadata,
   }) {
     super({ message, statusCode, reasonStatusCode, metadata });
+    this.options = options;
   }
 }
 
 module.exports = {
   OK,
   CREATED,
+  SuccessResonse,
 };

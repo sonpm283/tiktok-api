@@ -10,7 +10,7 @@ const apiKey = async (req, res, next) => {
     // nếu không có key thì trả về 403
     if (!key) {
       return res.status(403).json({
-        message: "Forbidden Errorx",
+        message: "Forbidden Error",
       });
     }
 
@@ -52,14 +52,7 @@ const permission = (permission) => {
   };
 };
 
-const asyncHandler = (fn) => {
-  return (req, res, next) => {
-    fn(req, res, next).catch(next);
-  };
-};
-
 module.exports = {
   apiKey,
   permission,
-  asyncHandler,
 };
