@@ -23,9 +23,9 @@ class AccessService {
     //1, check email in db
     const foundUser = await findByEmail({ email });
     if (!foundUser) throw new BadRequestError("Users not registered!");
-
+    console.log('password', password, foundUser.password);
     //2, match password
-    const math = bcrypt.compare(password, foundUser.password);
+    const math = await bcrypt.compare(password, foundUser.password);
     if (!math) throw new AuthFailureError("Authentication failed!");
 
     // 3, create privateKey and publicKey
