@@ -9,10 +9,10 @@ class VideoController {
     }).send(res);
   };
 
-  getAll = async (req, res, next) => {
+  getList = async (req, res, next) => {
     new OK({
       message: "Get all video successfully",
-      metadata: await VideoService.getAll(),
+      metadata: await VideoService.getList(req),
     }).send(res);
   };
 }

@@ -35,8 +35,24 @@ class VideoService {
     };
   };
 
-  static getAll = async () => {
-    const videos = await videoModel.find().lean();
+  static getList = async (req) => {
+    const {
+      _page = 1,
+      _limit = 10,
+      _sort = "createdAt",
+      _order = "asc",
+    } = req.query;
+
+    const options = {
+      page: _page,
+      limit: _limit,
+      sort: {
+        [_sort]: _order === "asc" ? 1 : -1,
+      },
+    };
+
+    const videos = await videoModel.paginate({}, options);
+    // const videos = await videoModel.find().lean();
     if (!videos) throw new BadRequestError("No video found!");
 
     if (videos) {

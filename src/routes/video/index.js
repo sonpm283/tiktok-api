@@ -10,6 +10,6 @@ router.post(
   storage.single("file"),
   asyncHandler(videoController.createNew)
 );
-router.get("/getAllVideo", asyncHandler(videoController.getAll));
+router.get("/getVideoList", asyncHandler(videoController.getList));
 
 module.exports = router;

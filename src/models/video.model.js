@@ -1,7 +1,7 @@
 "use strict";
 
 const { model, Schema } = require("mongoose");
-
+const mongoosePaginate = require('mongoose-paginate-v2');
 const DOCUMENT_NAME = "Video";
 const COLLECTION_NAME = "Videos";
 
@@ -27,5 +27,7 @@ const videoSchema = new Schema(
     collection: COLLECTION_NAME,
   }
 );
+
+videoSchema.plugin(mongoosePaginate)
 
 module.exports = model(DOCUMENT_NAME, videoSchema);

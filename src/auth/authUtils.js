@@ -2,6 +2,16 @@
 
 //install jwt package
 const JWT = require("jsonwebtoken");
+const { asyncHandler } = require("../helpers/anyncHandler");
+const { AuthFailureError, NotFoundError } = require("../core/error.response");
+const { findUserById } = require("../services/keyToken.service");
+
+const HEADER = {
+  API_KEY: "x-api-key",
+  CLIENT_ID: "x-client-id",
+  AUTHORIZATION: "authorization",
+};
+
 const createTokenPair = async (payload, publicKey, privateKey) => {
   try {
     // acccess token
@@ -28,6 +38,33 @@ const createTokenPair = async (payload, publicKey, privateKey) => {
   } catch (error) {}
 };
 
+const authentication = asyncHandler(async (req, res, next) => {
+  //1, kiểm tra userId ở trong req.headers
+  const userId = req.headers[HEADER.CLIENT_ID];
+  if (!userId) throw new AuthFailureError("Invalid Request");
+
+  // 2, check user trong db
+  const keyStore = await findUserById(userId);
+  console.log("keyStore::", keyStore);
+  if (!keyStore) throw new NotFoundError("Not found keyStore");
+
+  // 3, lấy Accestoken
+  const accessToken = req.headers[HEADER.AUTHORIZATION];
+  if (!accessToken) throw new AuthFailureError("Invalid Request");
+
+  // 4, verify accessToken
+  try {
+    const decodeUser = JWT.verify(accessToken, keyStore.publicKey);
+    if (userId !== decodeUser.userId) throw new AuthFailureError("Invalid UserId");
+
+    req.keyStore = keyStore;
+    return next();
+  } catch (error) {
+    throw error;
+  }
+});
+
 module.exports = {
   createTokenPair,
+  authentication,
 };

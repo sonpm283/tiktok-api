@@ -11,19 +11,19 @@ const { BadRequestError } = require("../core/error.response");
 const { findByEmail } = require("./user.service");
 
 class AccessService {
-  /*
-      1, check email in db
-      2, match password
-      3, create privateKey and publicKey
-      4, generate tokens
-      5, get data return login
-  */
+  static logout = async (keyStore) => {
+    // remove keyToken in db
+    const delKey = await KeyTokenService.removeKeyById(keyStore._id);
+    console.log(delKey);
+    return delKey;
+  };
 
   static login = async ({ email, password, refeshToken = null }) => {
     //1, check email in db
     const foundUser = await findByEmail({ email });
     if (!foundUser) throw new BadRequestError("Users not registered!");
-    console.log('password', password, foundUser.password);
+    console.log("password", password, foundUser.password);
+
     //2, match password
     const math = await bcrypt.compare(password, foundUser.password);
     if (!math) throw new AuthFailureError("Authentication failed!");
