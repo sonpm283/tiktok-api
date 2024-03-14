@@ -22,6 +22,20 @@ class VideoController {
       metadata: await VideoService.removeById(req),
     }).send(res);
   };
+
+  like = async (req, res, next) => {
+    new OK({
+      message: "Like video successfully",
+      metadata: await VideoService.likeVideo(req),
+    }).send(res);
+  };
+
+  unlike = async (req, res, next) => {
+    new OK({
+      message: "Unlike video successfully",
+      metadata: await VideoService.unLikeVideo(req),
+    }).send(res);
+  };
 }
 
 module.exports = new VideoController();

@@ -21,4 +21,16 @@ router.delete(
   asyncHandler(videoController.delete)
 );
 
+router.patch(
+  "/videos/:id/like",
+  authentication,
+  asyncHandler(videoController.like)
+);
+
+router.patch(
+  "/videos/:id/unlike",
+  authentication,
+  asyncHandler(videoController.unlike)
+);
+
 module.exports = router;

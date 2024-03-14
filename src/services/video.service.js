@@ -117,6 +117,57 @@ class VideoService {
       metadata: deletedVideo,
     };
   };
+
+  static likeVideo = async (req) => {
+    const videoId = req.params.id;
+    const userId = req.userId;
+
+    // kiểm tra xem user đã like video này chưa
+    const video = await videoModel.findOne({
+      _id: new Types.ObjectId(videoId),
+      likes: { $in: [userId] },
+    });
+
+    if (video) throw new BadRequestError("You already liked this video!");
+
+    return await videoModel.findOneAndUpdate(
+      {
+        _id: new Types.ObjectId(videoId),
+      },
+      {
+        // thêm userId(req.userId) vào mảng likes
+        $push: {
+          likes: new Types.ObjectId(userId),
+        },
+      }
+    );
+  };
+
+  static unLikeVideo = async (req) => {
+    const videoId = req.params.id;
+    const userId = req.userId;
+
+    // kiem tra xem user da like video nay chua
+    const video = await videoModel.findOne({
+      _id: new Types.ObjectId(videoId),
+      likes: { $in: [userId] },
+    });
+
+    if (!video) throw new BadRequestError("You haven't liked this video yet!");
+
+    // nếu đã like thì xoá userId(req.userId) khỏi mảng likes
+    return await videoModel.findOneAndUpdate(
+      {
+        _id: new Types.ObjectId(videoId),
+      },
+      {
+        // xoá userId(req.userId) khỏi mảng likes
+        $pull: {
+          likes: new Types.ObjectId(userId),
+        },
+      }
+    );
+  };
 }
 
 module.exports = VideoService;
