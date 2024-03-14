@@ -15,6 +15,13 @@ class VideoController {
       metadata: await VideoService.getList(req),
     }).send(res);
   };
+
+  delete = async (req, res, next) => {
+    new OK({
+      message: "Delete video successfully",
+      metadata: await VideoService.removeById(req),
+    }).send(res);
+  };
 }
 
 module.exports = new VideoController();

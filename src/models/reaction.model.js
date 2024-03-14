@@ -2,13 +2,14 @@
 
 const { model, Schema } = require("mongoose");
 
-const DOCUMENT_NAME = "Like";
-const COLLECTION_NAME = "Likes";
+const DOCUMENT_NAME = "Reaction";
+const COLLECTION_NAME = "Reactions";
 
-const likeSchema = new Schema(
+const reactionSchema = new Schema(
   {
     user_id: { type: Schema.Types.ObjectId, require: true, ref: "User" },
     video_id: { type: Schema.Types, ObjectId, require: true, ref: "Video" },
+    reaction_type: { type: String, require: true },
   },
   {
     timestamps,
@@ -16,4 +17,4 @@ const likeSchema = new Schema(
   }
 );
 
-module.exports = model(DOCUMENT_NAME, likeSchema);
+module.exports = model(DOCUMENT_NAME, reactionSchema);

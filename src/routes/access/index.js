@@ -15,6 +15,7 @@ router.post("/user/login", asyncHandler(accessController.login));
 router.use(authentication);
 
 //logout
+// sau khi chạy qua authentication middleware thì mới vào được api này
 router.post("/user/logout", asyncHandler(accessController.logout));
 
 module.exports = router;

@@ -2,7 +2,7 @@
 
 // generate router
 const express = require("express");
-const { apiKey, permission } = require("../auth/checkAuth");
+const { apiKey, permission } = require("../middlewares/checkAuth");
 const router = express.Router();
 
 //check api key

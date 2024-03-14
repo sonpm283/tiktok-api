@@ -9,7 +9,6 @@ class AccessController {
     }).send(res);
   };
   login = async (req, res, next) => {
-    console.log("body:::", req.body);
     new SuccessResonse({
       message: "Login successfully",
       metadata: await AccessService.login(req.body),

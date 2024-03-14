@@ -14,7 +14,6 @@ class AccessService {
   static logout = async (keyStore) => {
     // remove keyToken in db
     const delKey = await KeyTokenService.removeKeyById(keyStore._id);
-    console.log(delKey);
     return delKey;
   };
 
