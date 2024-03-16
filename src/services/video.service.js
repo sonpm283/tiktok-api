@@ -102,6 +102,7 @@ class VideoService {
 
     // tìm video trong db theo id
     const video = await videoModel.findById(id);
+    if (!video) throw new BadRequestError("Video not found!");
 
     // nếu user không phải là người upload video thì không cho xoá
     if (video.user_id.toString() !== req.userId) {
@@ -112,6 +113,8 @@ class VideoService {
     const deletedVideo = await videoModel.deleteOne({
       _id: new Types.ObjectId(id),
     });
+    if (!deletedVideo) throw new BadRequestError("Delete failed!");
+
     return {
       code: 200,
       metadata: deletedVideo,

@@ -22,6 +22,11 @@ const userSchema = new Schema(
       type: String,
       require: true,
     },
+    nickname: {
+      type: String,
+      unique: true,
+      trim: true,
+    },
     avatar: { type: String, default: "" },
     bio: { type: String, default: "" },
     tick: { type: Boolean, default: false },

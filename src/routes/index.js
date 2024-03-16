@@ -11,6 +11,7 @@ router.use(apiKey);
 router.use(permission("0000"));
 
 // muốn vào được các api thì phải vượt qua check api key và check permission
+router.use("/v1/api", require("./user"));
 router.use("/v1/api", require("./video"));
 router.use("/v1/api", require("./access"));
 
