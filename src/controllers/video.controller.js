@@ -36,6 +36,13 @@ class VideoController {
       metadata: await VideoService.unLikeVideo(req),
     }).send(res);
   };
+
+  getVideosByUserId = async (req, res, next) => {
+    new OK({
+      message: "Get videos successfully",
+      metadata: await VideoService.getVideosByUserId(req),
+    }).send(res);
+  };
 }
 
 module.exports = new VideoController();

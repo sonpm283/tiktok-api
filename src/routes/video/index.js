@@ -33,4 +33,10 @@ router.patch(
   asyncHandler(videoController.unlike)
 );
 
+router.get(
+  "/videos/getByUserId/:id",
+  authentication,
+  asyncHandler(videoController.getVideosByUserId)
+);
+
 module.exports = router;

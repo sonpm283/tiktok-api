@@ -171,6 +171,22 @@ class VideoService {
       }
     );
   };
+
+  static getVideosByUserId = async (req) => {
+    const userId = req.params.id;
+    const videos = await videoModel
+      .find({ user_id: new Types.ObjectId(userId) })
+      .lean();
+
+    if (!videos) throw new BadRequestError("No videos found");
+
+    if (videos) {
+      return {
+        code: 200,
+        metadata: videos,
+      };
+    }
+  };
 }
 
 module.exports = VideoService;

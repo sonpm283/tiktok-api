@@ -11,4 +11,16 @@ router.get(
   // authentication,
   asyncHandler(userController.search)
 );
+// Get user list
+router.get(
+  "/user/getUserList",
+  // authentication,
+  asyncHandler(userController.getList)
+);
+
+router.get(
+  "/user/profile/:id",
+  // authentication,
+  asyncHandler(userController.getInfo)
+);
 module.exports = router;
