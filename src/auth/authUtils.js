@@ -12,6 +12,7 @@ const HEADER = {
   AUTHORIZATION: "authorization",
 };
 
+// tạo 1 cặp token mới
 const createTokenPair = async (payload, publicKey, privateKey) => {
   try {
     // acccess token
@@ -38,6 +39,7 @@ const createTokenPair = async (payload, publicKey, privateKey) => {
   } catch (error) {}
 };
 
+// middleware authentication
 const authentication = asyncHandler(async (req, res, next) => {
   //1, check userId in req.headers
   const userId = req.headers[HEADER.CLIENT_ID];
@@ -54,9 +56,9 @@ const authentication = asyncHandler(async (req, res, next) => {
   // 4, verify accessToken
   try {
     const decodeUser = JWT.verify(accessToken, keyStore.publicKey);
-    const { userId } = decodeUser;
-    if (userId !== userId) throw new AuthFailureError("Invalid UserId");
-    req.userId = userId;
+    const { userId: userIdDecode } = decodeUser;
+    if (userId !== userIdDecode) throw new AuthFailureError("Invalid UserId");
+    req.userId = userIdDecode;
     req.keyStore = keyStore;
 
     return next();
@@ -65,7 +67,13 @@ const authentication = asyncHandler(async (req, res, next) => {
   }
 });
 
+// verify JWT
+const verifyJWT = async (token, keySecret) => {
+  return await JWT.verify(token, keySecret);
+};
+
 module.exports = {
   createTokenPair,
   authentication,
+  verifyJWT,
 };

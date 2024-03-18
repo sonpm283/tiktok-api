@@ -31,12 +31,28 @@ class KeyTokenService {
 
   // tìm kiếm user theo userId
   static findUserById = async (userId) => {
-    return await keyTokenModel.findOne({ user: new Types.ObjectId(userId) }).lean();
+    return await keyTokenModel
+      .findOne({ user: new Types.ObjectId(userId) })
+      .lean();
   };
 
   // xoá key theo id
   static removeKeyById = async (id) => {
     return keyTokenModel.deleteOne({ _id: new Types.ObjectId(id) });
+  };
+
+  static findByRefreshToken = async (refreshToken) => {
+    return await keyTokenModel.findOne({ refreshToken });
+  };
+
+  static findByRefreshTokenUsed = async (refreshToken) => {
+    return await keyTokenModel
+      .findOne({ refreshTokensUsed: refreshToken })
+      .lean();
+  };
+
+  static deleteKeyById = async (userId) => {
+    return keyTokenModel.deleteOne({ user: new Types.ObjectId(userId) });
   };
 }
 

@@ -4,13 +4,78 @@ const userModel = require("../models/user.model");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const KeyTokenService = require("./keyToken.service");
-const { createTokenPair } = require("../auth/authUtils");
+const { createTokenPair, verifyJWT } = require("../auth/authUtils");
 const { getInfoData } = require("../utils");
 const { RoleUser } = require("../utils/constants");
-const { BadRequestError } = require("../core/error.response");
+const {
+  BadRequestError,
+  ForbiddenError,
+  AuthFailureError,
+} = require("../core/error.response");
 const { findByEmail } = require("./user.service");
 
 class AccessService {
+  static handleRefreshToken = async (refreshToken) => {
+    //check xem token nay da su dung chua
+    const foundToken = await KeyTokenService.findByRefreshTokenUsed(
+      refreshToken
+    );
+
+    // neu co
+    if (foundToken) {
+      console.log("foundToken", foundToken);
+      //decode token de lay thong tin user
+      const { userId, email } = await verifyJWT(refreshToken, foundToken.privateKey);
+      console.log("[1----]", { userId, email });
+      // xoá tat ca token khỏi keyTokenStore
+      await KeyTokenService.deleteKeyById(userId);
+      throw new ForbiddenError("Something wrong happened! Pls relogin");
+    }
+
+    // nếu refresh token chưa được sử dụng
+    const holderToken = await KeyTokenService.findByRefreshToken(refreshToken);
+    console.log("holderToken", holderToken);
+    if (!holderToken) throw new AuthFailureError("User not registered!");
+
+    // verify refreshToken
+    const { userId, email } = await verifyJWT(
+      refreshToken,
+      holderToken.privateKey
+    );
+    console.log("[2]--", { userId, email });
+
+    // check userId
+    const foundUser = findByEmail({ email });
+    if (!foundUser) throw new AuthFailureError("User not registered!");
+
+    // tạo 1 cặp token mới
+    const tokens = await createTokenPair(
+      { userId, email },
+      holderToken.publicKey,
+      holderToken.privateKey
+    );
+
+    console.log("tokens", tokens);
+
+    //update trực tiếp token mới từ holderToken vừa tìm kiếm được ở trên
+    await holderToken.updateOne({
+      $set: {
+        //cập nhật lại refreshToken mới
+        refreshToken: tokens.refreshToken,
+      },
+      $addToSet: {
+        // thêm refreshToken cũ vào mảng refreshTokensUsed
+        // nếu bị hack thì có thể kiểm tra xem refreshToken nào đã được sử dụng
+        refreshTokensUsed: refreshToken,
+      },
+    });
+
+    return {
+      user: { userId, email },
+      tokens,
+    };
+  };
+
   static logout = async (keyStore) => {
     // remove keyToken in db
     const delKey = await KeyTokenService.removeKeyById(keyStore._id);
