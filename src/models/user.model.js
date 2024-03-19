@@ -30,8 +30,8 @@ const userSchema = new Schema(
     avatar: { type: String, default: "" },
     bio: { type: String, default: "" },
     tick: { type: Boolean, default: false },
-    followers_count: { type: Number, default: 0 },
-    followings_count: { type: Number, default: 0 },
+    followers: [{ type: Types.ObjectId, ref: "User" }],
+    followings: [{ type: Types.ObjectId, ref: "User" }],
     like_count: { type: Number, default: 0 },
     social_network: [{ name: String, url: String }],
     status: {

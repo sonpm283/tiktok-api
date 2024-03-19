@@ -1,15 +1,16 @@
 "use strict";
 
 const userModel = require("../models/user.model");
-const cloudinary = require("../configs/cloudinary");
+// const cloudinary = require("../configs/cloudinary");
 const { BadRequestError } = require("../core/error.response");
 
 // Get user list
 const getUsers = async () => {
   const users = await userModel
     .find()
-    .limit(10)
+    .limit(5)
     .select("name email nickname tick")
+    .sort({ createdAt: -1 })
     .lean();
 
   if (!users) BadRequestError("No users found");
@@ -17,12 +18,24 @@ const getUsers = async () => {
   return users;
 };
 
+const followingsUser = async (req) => {
+  // query all user followings
+  const followingsUser = await userModel
+    .findById(req.userId)
+    .populate("followings", "name email nickname tick")
+    .lean();
+
+  if (!followingsUser) throw new BadRequestError("No user found!");
+
+  return followingsUser;
+};
+
 const getUserInfo = async (req) => {
   const userId = req.params.id;
 
   const user = await userModel
     .findById(userId)
-    .select("name avatar nickname tick followers_count followings_count")
+    .select("name avatar nickname tick followings followers")
     .lean();
 
   if (!user) throw new BadRequestError();
@@ -51,35 +64,114 @@ const searchUser = async (req) => {
   return foundUser;
 };
 
-// update user
-const updateUser = async (req) => {
-  const userId = req.params.user_id;
-  const { name, avatar } = req.body;
+//follow user
+const follow = async (req) => {
+  //1, kiểm tra xem user đã follow chưa
+  const followed = await userModel
+    .findOne({
+      _id: req.params.id,
+      followers: req.userId,
+    })
+    .lean();
+  if (followed)
+    throw new BadRequestError("You have already followed this user!");
 
-  //update avatar with cloudinary
-  if (userId) {
-    const result = await cloudinary.uploader.upload(req.file.path, {
-      resource_type: "image",
-      folder: "image",
-    });
-    req.body.avatar = result.url;
-  }
+  //2, thêm userId(req.userId) vào mảng followers
+  const newUser = await userModel
+    .findOneAndUpdate(
+      { _id: req.params.id },
+      {
+        $push: {
+          followers: req.userId,
+        },
+      },
+      { new: true }
+    )
+    .populate("followers followings", "-password");
 
-  const user = await userModel.findOneAndUpdate(
-    { userId },
-    { name, avatar },
+  //3, thêm req.params.id vào mảng followings
+  await userModel.findOneAndUpdate(
+    { _id: req.userId },
+    {
+      $push: {
+        followings: req.params.id,
+      },
+    },
     { new: true }
   );
 
-  if (!user) throw new BadRequestError("User not found!");
-
-  return user;
+  return newUser;
 };
+
+//unFollow user
+const unFollow = async (req) => {
+  //1, kiểm tra xem user đã follow chưa
+  const followed = await userModel.findOne({
+    _id: req.params.id,
+    followers: req.userId,
+  });
+  if (!followed)
+    throw new BadRequestError("You haven't followed this user yet!");
+
+  //2, xoá userId(req.userId) vào mảng followers
+  const newUser = await userModel
+    .findOneAndUpdate(
+      { _id: req.params.id },
+      {
+        $pull: {
+          followers: req.userId,
+        },
+      },
+      { new: true }
+    )
+    .populate("followers followings", "-password");
+
+  //3, xoá req.params.id vào mảng followings
+  await userModel.findOneAndUpdate(
+    { _id: req.userId },
+    {
+      $pull: {
+        followings: req.params.id,
+      },
+    },
+    { new: true }
+  );
+
+  return newUser;
+};
+
+// update user
+// const updateUser = async (req) => {
+//   const userId = req.params.user_id;
+//   const { name, avatar } = req.body;
+
+//   //update avatar with cloudinary
+//   if (userId) {
+//     const result = await cloudinary.uploader.upload(req.file.path, {
+//       resource_type: "image",
+//       folder: "image",
+//     });
+//     req.body.avatar = result.url;
+//   }
+
+//   const user = await userModel.findOneAndUpdate(
+//     { userId },
+//     { name, avatar },
+//     { new: true }
+//   );
+
+//   if (!user) throw new BadRequestError("User not found!");
+
+//   return user;
+// };
 
 module.exports = {
   findByEmail,
   searchUser,
-  updateUser,
+  // updateUser,
   getUsers,
   getUserInfo,
+  follow,
+  unFollow,
+  followingsUser,
 };

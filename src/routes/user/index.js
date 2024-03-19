@@ -6,21 +6,28 @@ const userController = require("../../controllers/user.controller");
 const { asyncHandler } = require("../../helpers/anyncHandler");
 
 // Search user by name
-router.get(
-  "/user/search",
-  // authentication,
-  asyncHandler(userController.search)
-);
+router.get("/user/search", asyncHandler(userController.search));
+
 // Get user list
-router.get(
-  "/user/getUserList",
-  // authentication,
-  asyncHandler(userController.getList)
+router.get("/user/getUserList", asyncHandler(userController.getList));
+
+router.get("/user/profile/:id", asyncHandler(userController.getInfo));
+
+router.patch(
+  "/user/:id/follow",
+  authentication,
+  asyncHandler(userController.follow)
+);
+
+router.patch(
+  "/user/:id/unfollow",
+  authentication,
+  asyncHandler(userController.unFollow)
 );
 
 router.get(
-  "/user/profile/:id",
-  // authentication,
-  asyncHandler(userController.getInfo)
+  "/user/getFollowingsUser",
+  authentication,
+  asyncHandler(userController.getFollowUser)
 );
 module.exports = router;

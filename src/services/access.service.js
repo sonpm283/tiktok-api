@@ -21,13 +21,16 @@ class AccessService {
       refreshToken
     );
 
-    // neu co
+    // nếu refreshToken đã được sử dụng
     if (foundToken) {
       console.log("foundToken", foundToken);
       //decode token de lay thong tin user
-      const { userId, email } = await verifyJWT(refreshToken, foundToken.privateKey);
-      console.log("[1----]", { userId, email });
-      // xoá tat ca token khỏi keyTokenStore
+      const { userId, email } = await verifyJWT(
+        refreshToken,
+        foundToken.privateKey
+      );
+      console.log("[1]--", { userId, email });
+      // xoá tất cả token khỏi keyTokenStore
       await KeyTokenService.deleteKeyById(userId);
       throw new ForbiddenError("Something wrong happened! Pls relogin");
     }

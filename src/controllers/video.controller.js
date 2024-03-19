@@ -1,5 +1,5 @@
 const VideoService = require("../services/video.service");
-const { CREATED, OK } = require("../core/success.response");
+const { CREATED, OK, SuccessResonse } = require("../core/success.response");
 
 class VideoController {
   createNew = async (req, res, next) => {
@@ -10,35 +10,35 @@ class VideoController {
   };
 
   getList = async (req, res, next) => {
-    new OK({
+    new SuccessResonse({
       message: "Get all video successfully",
       metadata: await VideoService.getList(req),
     }).send(res);
   };
 
   delete = async (req, res, next) => {
-    new OK({
+    new SuccessResonse({
       message: "Delete video successfully",
       metadata: await VideoService.removeById(req),
     }).send(res);
   };
 
   like = async (req, res, next) => {
-    new OK({
+    new SuccessResonse({
       message: "Like video successfully",
       metadata: await VideoService.likeVideo(req),
     }).send(res);
   };
 
   unlike = async (req, res, next) => {
-    new OK({
+    new SuccessResonse({
       message: "Unlike video successfully",
       metadata: await VideoService.unLikeVideo(req),
     }).send(res);
   };
 
   getVideosByUserId = async (req, res, next) => {
-    new OK({
+    new SuccessResonse({
       message: "Get videos successfully",
       metadata: await VideoService.getVideosByUserId(req),
     }).send(res);
