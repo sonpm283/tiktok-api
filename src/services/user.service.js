@@ -8,7 +8,6 @@ const { BadRequestError } = require("../core/error.response");
 const getUsers = async () => {
   const users = await userModel
     .find()
-    .limit(5)
     .select("name email nickname tick")
     .sort({ createdAt: -1 })
     .lean();
@@ -22,7 +21,8 @@ const followingsUser = async (req) => {
   // query all user followings
   const followingsUser = await userModel
     .findById(req.userId)
-    .populate("followings", "name email nickname tick")
+    .limit(10)
+    .populate("followings", "name avatar nickname tick")
     .lean();
 
   if (!followingsUser) throw new BadRequestError("No user found!");
@@ -141,34 +141,35 @@ const unFollow = async (req) => {
 };
 
 // update user
-// const updateUser = async (req) => {
-//   const userId = req.params.user_id;
-//   const { name, avatar } = req.body;
+const updateUser = async (req) => {
+  const userId = req.userId;
+  const { name, avatar, bio } = req.body;
+  if (!name) return res.status(400).json({ msg: "Please add your full name." });
 
-//   //update avatar with cloudinary
-//   if (userId) {
-//     const result = await cloudinary.uploader.upload(req.file.path, {
-//       resource_type: "image",
-//       folder: "image",
-//     });
-//     req.body.avatar = result.url;
-//   }
+  //update avatar with cloudinary
+  // if (userId) {
+  //   const result = await cloudinary.uploader.upload(req.file.path, {
+  //     resource_type: "image",
+  //     folder: "image",
+  //   });
+  //   req.body.avatar = result.url;
+  // }
 
-//   const user = await userModel.findOneAndUpdate(
-//     { userId },
-//     { name, avatar },
-//     { new: true }
-//   );
+  const user = await userModel.findOneAndUpdate(
+    { _id: userId },
+    { name, avatar, bio },
+    { new: true }
+  );
 
-//   if (!user) throw new BadRequestError("User not found!");
+  if (!user) throw new BadRequestError("User not found!");
 
-//   return user;
-// };
+  return user;
+};
 
 module.exports = {
   findByEmail,
   searchUser,
-  // updateUser,
+  updateUser,
   getUsers,
   getUserInfo,
   follow,

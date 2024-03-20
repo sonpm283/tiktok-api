@@ -1,6 +1,6 @@
 const {
   searchUser,
-  // updateUser,
+  updateUser,
   getUsers,
   getUserInfo,
   follow,
@@ -23,7 +23,7 @@ class UserController {
       metadata: await followingsUser(req),
     }).send(res);
   };
-
+  
   search = async (req, res, next) => {
     new SuccessResonse({
       message: "Search user successfully",
@@ -31,12 +31,12 @@ class UserController {
     }).send(res);
   };
 
-  // update = async (req, res, next) => {
-  //   new SuccessResonse({
-  //     message: "Update user successfully",
-  //     metadata: await updateUser(req),
-  //   }).send(res);
-  // };
+  update = async (req, res, next) => {
+    new SuccessResonse({
+      message: "Update user successfully",
+      metadata: await updateUser(req),
+    }).send(res);
+  };
 
   getInfo = async (req, res, next) => {
     new SuccessResonse({

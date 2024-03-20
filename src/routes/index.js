@@ -14,5 +14,6 @@ router.use(permission("0000"));
 router.use("/v1/api", require("./user"));
 router.use("/v1/api", require("./video"));
 router.use("/v1/api", require("./access"));
+router.use("/v1/api", require("./upload"));
 
 module.exports = router;

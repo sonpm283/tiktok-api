@@ -30,4 +30,6 @@ router.get(
   authentication,
   asyncHandler(userController.getFollowUser)
 );
+
+router.patch("/user", authentication, asyncHandler(userController.update));
 module.exports = router;
