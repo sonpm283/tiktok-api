@@ -23,7 +23,7 @@ class UserController {
       metadata: await followingsUser(req),
     }).send(res);
   };
-  
+
   search = async (req, res, next) => {
     new SuccessResonse({
       message: "Search user successfully",

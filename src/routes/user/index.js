@@ -4,6 +4,7 @@ const router = require("express").Router();
 const { authentication } = require("../../auth/authUtils");
 const userController = require("../../controllers/user.controller");
 const { asyncHandler } = require("../../helpers/anyncHandler");
+const storage = require("../../configs/multer");
 
 // Search user by name
 router.get("/user/search", asyncHandler(userController.search));
@@ -31,5 +32,10 @@ router.get(
   asyncHandler(userController.getFollowUser)
 );
 
-router.patch("/user", authentication, asyncHandler(userController.update));
+router.patch(
+  "/user",
+  authentication,
+  storage.single("file"),
+  asyncHandler(userController.update)
+);
 module.exports = router;

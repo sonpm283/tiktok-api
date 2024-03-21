@@ -3,6 +3,7 @@
 const userModel = require("../models/user.model");
 // const cloudinary = require("../configs/cloudinary");
 const { BadRequestError } = require("../core/error.response");
+const UploadService = require("./upload.service");
 
 // Get user list
 const getUsers = async () => {
@@ -121,7 +122,7 @@ const unFollow = async (req) => {
         $pull: {
           followers: req.userId,
         },
-      },
+      },  
       { new: true }
     )
     .populate("followers followings", "-password");
@@ -143,18 +144,13 @@ const unFollow = async (req) => {
 // update user
 const updateUser = async (req) => {
   const userId = req.userId;
+
+  // update avatar with cloudinary
+  const result = await UploadService.upload(req);
+
+  if (result) req.body.avatar = result;
+
   const { name, avatar, bio } = req.body;
-  if (!name) return res.status(400).json({ msg: "Please add your full name." });
-
-  //update avatar with cloudinary
-  // if (userId) {
-  //   const result = await cloudinary.uploader.upload(req.file.path, {
-  //     resource_type: "image",
-  //     folder: "image",
-  //   });
-  //   req.body.avatar = result.url;
-  // }
-
   const user = await userModel.findOneAndUpdate(
     { _id: userId },
     { name, avatar, bio },
@@ -169,8 +165,8 @@ const updateUser = async (req) => {
 module.exports = {
   findByEmail,
   searchUser,
-  updateUser,
   getUsers,
+  updateUser,
   getUserInfo,
   follow,
   unFollow,
