@@ -36,6 +36,7 @@ class AccessService {
     }
 
     // nếu refresh token chưa được sử dụng
+    // tìm kiếm holderToken trong db
     const holderToken = await KeyTokenService.findByRefreshToken(refreshToken);
     console.log("holderToken", holderToken);
     if (!holderToken) throw new AuthFailureError("User not registered!");
@@ -52,19 +53,19 @@ class AccessService {
     if (!foundUser) throw new AuthFailureError("User not registered!");
 
     // tạo 1 cặp token mới
-    const tokens = await createTokenPair(
+    const newTokens = await createTokenPair(
       { userId, email },
       holderToken.publicKey,
       holderToken.privateKey
     );
 
-    console.log("tokens", tokens);
+    console.log("tokens", newTokens);
 
     //update trực tiếp token mới từ holderToken vừa tìm kiếm được ở trên
     await holderToken.updateOne({
       $set: {
         //cập nhật lại refreshToken mới
-        refreshToken: tokens.refreshToken,
+        refreshToken: newTokens.refreshToken,
       },
       $addToSet: {
         // thêm refreshToken cũ vào mảng refreshTokensUsed
@@ -75,7 +76,7 @@ class AccessService {
 
     return {
       user: { userId, email },
-      tokens,
+      newTokens,
     };
   };
 

@@ -61,11 +61,17 @@ const authentication = asyncHandler(async (req, res, next) => {
     req.userId = userIdDecode;
     req.keyStore = keyStore;
 
+    // 5, check if accessToken is expired
+    const now = Date.now().valueOf() / 1000;
+    console.log(now);
+    if (decodeUser.exp < now) throw new AuthFailureError("Token expired");
+    
     return next();
   } catch (error) {
     throw error;
   }
 });
+
 
 // verify JWT
 const verifyJWT = async (token, keySecret) => {
