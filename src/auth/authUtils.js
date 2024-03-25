@@ -23,7 +23,7 @@ const createTokenPair = async (payload, publicKey, privateKey) => {
 
     // tạo refresh token bằng JWT.sign() với privateKey,
     const refreshToken = await JWT.sign(payload, privateKey, {
-      expiresIn: "7 days",
+      expiresIn: "30 days",
     });
 
     // verify acccessToken
@@ -55,23 +55,32 @@ const authentication = asyncHandler(async (req, res, next) => {
 
   // 4, verify accessToken
   try {
-    const decodeUser = JWT.verify(accessToken, keyStore.publicKey);
-    const { userId: userIdDecode } = decodeUser;
-    if (userId !== userIdDecode) throw new AuthFailureError("Invalid UserId");
-    req.userId = userIdDecode;
-    req.keyStore = keyStore;
+    JWT.verify(accessToken, keyStore.publicKey, (err, decodeUser) => {
+      if (err) {
+        // check expired token
+        if (err.message.includes("expired")) {
+          throw new AuthFailureError("Access token has expired");
+        }
+        throw new AuthFailureError(err);
+      } else {
+        const { userId: userIdDecode } = decodeUser;
+        if (userId !== userIdDecode)
+          throw new AuthFailureError("Invalid UserId");
+        req.userId = userIdDecode;
+        req.keyStore = keyStore;
+      }
+    });
 
     // 5, check if accessToken is expired
-    const now = Date.now().valueOf() / 1000;
-    console.log(now);
-    if (decodeUser.exp < now) throw new AuthFailureError("Token expired");
-    
+    // const now = Date.now().valueOf() / 1000;
+    // console.log(now);
+    // if (decodeUser.exp < now) throw new AuthFailureError("Token expired");
+
     return next();
   } catch (error) {
     throw error;
   }
 });
-
 
 // verify JWT
 const verifyJWT = async (token, keySecret) => {

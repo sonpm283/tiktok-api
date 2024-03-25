@@ -11,14 +11,16 @@ const router = express.Router();
 router.post("/user/signup", asyncHandler(accessController.signUp));
 router.post("/user/login", asyncHandler(accessController.login));
 
-//authentication
-router.use(authentication);
-
 //logout
-// sau khi chạy qua authentication middleware thì mới vào được api này
-router.post("/user/logout", asyncHandler(accessController.logout));
 router.post(
-  "/user/handleRefreshToken",
+  "/user/logout",
+  authentication,
+  asyncHandler(accessController.logout)
+);
+
+//refresh token
+router.post(
+  "/user/refresh-token",
   asyncHandler(accessController.handleRefreshToken)
 );
 
