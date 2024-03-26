@@ -4,7 +4,7 @@ const { CREATED, OK, SuccessResonse } = require("../core/success.response");
 class VideoController {
   createNew = async (req, res, next) => {
     new CREATED({
-      message: "Video created successfully",
+      message: "Video upload successfully",
       metadata: await VideoService.createNew(req),
     }).send(res);
   };

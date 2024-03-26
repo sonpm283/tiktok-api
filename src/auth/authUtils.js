@@ -18,7 +18,7 @@ const createTokenPair = async (payload, publicKey, privateKey) => {
     // acccess token
     // tạo access token bằng JWT.sign() với publicKey,
     const accessToken = await JWT.sign(payload, publicKey, {
-      expiresIn: "2 days",
+      expiresIn: "12h",
     });
 
     // tạo refresh token bằng JWT.sign() với privateKey,
@@ -70,11 +70,6 @@ const authentication = asyncHandler(async (req, res, next) => {
         req.keyStore = keyStore;
       }
     });
-
-    // 5, check if accessToken is expired
-    // const now = Date.now().valueOf() / 1000;
-    // console.log(now);
-    // if (decodeUser.exp < now) throw new AuthFailureError("Token expired");
 
     return next();
   } catch (error) {

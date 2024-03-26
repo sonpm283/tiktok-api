@@ -47,7 +47,7 @@ const getUserInfo = async (req) => {
 // Find user by email
 const findByEmail = async ({
   email,
-  select = { email: 1, password: 1, name: 1, roles: 1 },
+  select = { email: 1, password: 1, name: 1, roles: 1, avatar: 1 },
 }) => {
   return await userModel.findOne({ email }).select(select).lean();
 };
@@ -122,7 +122,7 @@ const unFollow = async (req) => {
         $pull: {
           followers: req.userId,
         },
-      },  
+      },
       { new: true }
     )
     .populate("followers followings", "-password");

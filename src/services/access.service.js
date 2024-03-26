@@ -122,7 +122,7 @@ class AccessService {
       metadata: {
         user: getInfoData({
           object: foundUser,
-          fileds: ["_id", "name", "email"],
+          fileds: ["_id", "name", "email", "avatar"],
         }),
         tokens,
       },
@@ -176,7 +176,7 @@ class AccessService {
         metadata: {
           user: getInfoData({
             object: newUser,
-            fileds: ["_id", "name", "email"],
+            fileds: ["_id", "name", "email", "avatar"],
           }),
           tokens,
         },
