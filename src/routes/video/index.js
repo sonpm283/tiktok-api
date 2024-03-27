@@ -35,7 +35,6 @@ router.patch(
 
 router.get(
   "/videos/getByUserId/:id",
-  authentication,
   asyncHandler(videoController.getVideosByUserId)
 );
 
