@@ -38,4 +38,6 @@ router.get(
   asyncHandler(videoController.getVideosByUserId)
 );
 
+router.get("/videos/:id", asyncHandler(videoController.getVideoById));
+
 module.exports = router;

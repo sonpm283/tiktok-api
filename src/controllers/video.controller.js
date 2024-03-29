@@ -43,6 +43,13 @@ class VideoController {
       metadata: await VideoService.getVideosByUserId(req),
     }).send(res);
   };
+
+  getVideoById = async (req, res, next) => {
+    new SuccessResonse({
+      message: "Get video successfully",
+      metadata: await VideoService.getVideoById(req),
+    }).send(res);
+  };
 }
 
 module.exports = new VideoController();

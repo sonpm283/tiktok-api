@@ -187,6 +187,17 @@ class VideoService {
       };
     }
   };
+
+  static getVideoById = async (req) => {
+    const { id } = req.params;
+
+    const video = await videoModel
+      .findOne({ _id: new Types.ObjectId(id) })
+      .populate("user_id", "name avatar nickname tick").lean()
+
+    if (!video) throw new BadRequestError("No video found");
+    return video;
+  };
 }
 
 module.exports = VideoService;
